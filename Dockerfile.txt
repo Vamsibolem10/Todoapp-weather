@@ -1,0 +1,21 @@
+# Use Node.js official image
+FROM node:18
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files and install dependencies
+COPY package*.json ./
+RUN npm install
+
+# Copy the rest of the code
+COPY . .
+
+# Set environment variables
+ENV MONGO_URI=mongodb://mongo:27017/todoapp
+
+# Expose the port
+EXPOSE 5000
+
+# Run the server
+CMD ["node", "server.js"]
