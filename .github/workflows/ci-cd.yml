@@ -1,0 +1,60 @@
+name: CI/CD Workflow
+
+on:
+  push:
+    branches:
+      - main  # Trigger on push to the main branch
+  pull_request:
+    branches:
+      - main  # Trigger on pull requests targeting the main branch
+
+jobs:
+  # Job to set up Node.js, install dependencies, and run tests
+  build_and_test:
+    runs-on: ubuntu-latest  # Runs on the latest Ubuntu environment
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2  # Checkout code from the repository
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'  # Define the Node.js version
+
+      - name: Install Dependencies
+        run: npm install   # Install project dependencies
+
+      - name: Run Tests
+        run: npm test   # Run tests defined in your project
+
+  # Job to deploy the application
+  deploy:
+    runs-on: ubuntu-latest  # Runs on the latest Ubuntu environment
+    needs: build_and_test  # This job depends on the build_and_test job
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Application
+        run: npm run build  # Build your React application for production
+
+      - name: Deploy to Server
+        run: |
+          # Add commands for deployment here, like pushing to a server or cloud provider
+          echo "Deploying app to server..."  
+          # Example for deploying to a server (replace with your deployment method)
+          ssh user@your-server "cd /path/to/app && git pull && npm install && pm2 restart app"
+
+      - name: Clean up
+        run: |
+          echo "Cleaning up after deployment..."
